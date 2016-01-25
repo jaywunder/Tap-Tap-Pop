@@ -1,0 +1,56 @@
+* { outline: none; }
+html, body {
+  height:100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+#draw-shapes {
+  position: absolute;
+  z-index: -10;
+}
+
+.score-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#score {
+  font-family: monospace;
+  font-size: 72px;
+  color: rgb(54, 60, 77)
+}
+
+#ai-button {
+  background: rgb(54, 60, 77);
+  border: none;
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+  font-size: 32px;
+  font-family: monospace;
+  border-radius: .2em;
+}
+
+#high-score {
+  color: rgb(60, 65, 80);
+  position: absolute;
+  top: 0em;
+  right: 1em;
+  font-size: 32px;
+  font-family: monospace;
+}
+
+#ai-button:hover {
+  background: rgb(60, 65, 80);
+}
+
+#ai-button[state="on"] {
+  color: rgb(228, 142, 13);
+}
+#ai-button[state="off"] {
+  color: rgb(81, 191, 222);
+}

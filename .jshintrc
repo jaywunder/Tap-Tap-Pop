@@ -1,0 +1,6 @@
+{
+  "strict": false,
+  "esnext": true,
+  "browser": true,
+  "asi": true
+}
