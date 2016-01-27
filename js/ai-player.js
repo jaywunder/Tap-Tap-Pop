@@ -17,25 +17,26 @@ let synapse_0_update = new Matrix(input_dim, hidden_dim).toValue(0)
 let synapse_1_update = new Matrix(hidden_dim, output_dim).toValue(0)
 let synapse_h_update = new Matrix(hidden_dim, hidden_dim).toValue(0)
 
-let layer_2_deltas = []
-let layer_1_values = []
-layer_1_values.push(new Matrix(hidden_dim, 1).toValue(0))
-
 let overallError = 0
 
 let ten = (10 * (Math.PI / 180)) // ten degrees in radians
 
-onmessage = function(e) {
-  let data = e.data
-  // console.log('data:', data[0].toFixed(1), data[1].toFixed(1));
-  // if (data[0].toFixed(1) === data[1].toFixed(1))
+onmessage = function(event) {
+  let angle0 = event.data[0]
+  let angle1 = event.data[1]
 
-  if (data[0] > data[1] - ten &&
-      data[0] < data[1] + ten)
-    postMessage('key-space')
 
-  let angle0 = data[0]
-  let angle1 = data[1]
+  // RULES ENGINE TO ALWAYS GET THE ANGLES RIGHT
+  // if (angle0 > angle1 - ten && angle0 < angle1 + ten)
+  //   postMessage('key-space')
+
+
+  let layer_2_deltas = []
+  let layer_1_values = []
+  layer_1_values.push(new Matrix(hidden_dim, 1).toZeros())
+
+
+
 
 
 }

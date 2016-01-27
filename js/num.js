@@ -47,12 +47,16 @@ class Matrix {
   }
 
   toZeros() {
-    this.writeAll((x) => { return 0 })
+    // jshint -W053
+    // here I use "new Number" because 0 is type inferenced into undefined
+    this.writeAll((x) => { return new Number(0) })
     return this
   }
 
   toValue(val) {
-    this.writeAll((x) => { return val })
+    // jshint -W053
+    // here I use "new Number" because 0 is type inferenced into undefined
+    this.writeAll((x) => { return new Number(val) })
     return this
   }
 
