@@ -56,6 +56,16 @@ class Matrix {
     return this
   }
 
+  toString() {
+    let str = ''
+
+    str = str + this.map((x) => {
+      return '[' + x.toString() + ']'
+    })
+
+    return str
+  }
+
   writeAll(func) {
     for (let y = 0; y < this.matrix.length; y++) {
       for (let x = 0; x < this.matrix[y].length; x++) {
@@ -70,13 +80,23 @@ class Matrix {
     if (typeof other == 'number')
       return this.mapAll((value, i, j) => { return value * other })
 
-    else if (other instanceof Matrix) { // STILL UNDER WORK
+    else if (other instanceof Matrix) {
       if (this.rows === other.cols) {
         let final = new Matrix(this.rows, other.cols)
 
+        for (let row = 0; row < this.rows; row++) {
+          for (let col = 0; col < other.cols; col++) {
+            let rowTotal = 0;
+            this.matrix[row].map((x, i) => {
+              rowTotal += x * other.matrix[i][col]
+            })
 
+            final.matrix[row][col] = rowTotal
+          }
+        }
+        return final
       } else {
-        new Error('Size Error: Matrices aren\'t the same size')
+        new Error('Size Error: Rows of A don\'t match the Columns of B')
       }
     }
   }
@@ -121,8 +141,10 @@ class Matrix {
 
     }
   }
-
-  toString() {
-    return this.matrix.toString()
-  }
 }
+
+let ctx = typeof window === 'undefined' ? self : window
+ctx.num = {}
+num.sigmoid = sigmoid
+num.sigmoid_output_to_derivative = sigmoid_output_to_derivative
+num.Matrix = Matrix
