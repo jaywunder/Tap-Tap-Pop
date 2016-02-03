@@ -14,17 +14,18 @@ let two = new Two(params).appendTo(elem)
 let centerRadius = two.height / 8
 let centerX = two.width / 2
 let centerY = two.height / 2
-let thickness = two.width / 50 // 20 // two.width > two.height ? two.width / 50 : two.height / 50
+let thickness = two.height / 20 // two.width < two.height ? two.width / 20 : two.height / 20
+console.log(two.width > two.height ? two.width / 20 : two.height / 20);
 
 let background = two.makeRectangle(centerX, centerY, two.width, two.height)
 let centerCircle = two.makeCircle(centerX, centerY,  centerRadius)
 let smallCircle = two.makeEllipse(
   centerX - centerRadius, centerY,
-  thickness * 0.6, thickness * 0.6
+  thickness * 0.4, thickness * 0.4
 )
 let tick = two.makeRoundedRectangle(
   centerX - centerRadius, centerY,
-  thickness / 2, thickness * 1.9, 3
+  thickness * 0.5, thickness * 2, 3
 )
 
 background.fill = 'rgb(109, 140, 149)'
@@ -32,7 +33,7 @@ background.noStroke()
 
 centerCircle.noFill()
 centerCircle.stroke = 'rgb(54, 60, 77)'
-centerCircle.linewidth = 40
+centerCircle.linewidth = thickness
 
 smallCircle.fill = 'rgb(228, 142, 13)'
 smallCircle.noStroke()
@@ -116,7 +117,8 @@ function updateScore() {
   document.getElementById('score').innerHTML = points
 }
 
-document.getElementById('ai-button').onclick = function() {
+let aiButton = document.getElementById('ai-button')
+if (aiButton !== null) aiButton.onclick = function() {
   AIPLAYING = !AIPLAYING
 
   let button = document.getElementById('ai-button')
