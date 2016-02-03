@@ -25,7 +25,7 @@ let smallCircle = two.makeEllipse(
 )
 let tick = two.makeRoundedRectangle(
   centerX - centerRadius, centerY,
-  thickness * 0.5, thickness * 2, 3
+  thickness * 0.3, thickness * 2, 3
 )
 
 background.fill = 'rgb(109, 140, 149)'
