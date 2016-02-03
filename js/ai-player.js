@@ -34,9 +34,4 @@ onmessage = function(event) {
   let layer_2_deltas = []
   let layer_1_values = []
   layer_1_values.push(new Matrix(hidden_dim, 1).toZeros())
-
-
-
-
-
 }
