@@ -2,6 +2,11 @@
 //jshint -W097
 'use strict';
 
+window.addEventListener('touchstart', (event) => {
+  event.preventDefault()
+  $(window).trigger('key-space')
+})
+
 window.addEventListener('keydown', (event) => {
   // console.log(event.which);
   switch (event.which) {
