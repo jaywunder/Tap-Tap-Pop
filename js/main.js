@@ -14,7 +14,7 @@ let two = new Two(params).appendTo(elem)
 let centerRadius = two.height / 8
 let centerX = two.width / 2
 let centerY = two.height / 2
-let thickness = 20 // two.width > two.height ? two.width / 50 : two.height / 50
+let thickness = two.width / 50 // 20 // two.width > two.height ? two.width / 50 : two.height / 50
 
 let background = two.makeRectangle(centerX, centerY, two.width, two.height)
 let centerCircle = two.makeCircle(centerX, centerY,  centerRadius)
