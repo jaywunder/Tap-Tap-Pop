@@ -60,6 +60,7 @@ let tickAngle = 0
 let points = 0
 let randAngle = 2 * Math.PI * Math.random()
 let direction = 1
+
 updateScore()
 
 two.bind('update', function(frameCount) {
@@ -128,6 +129,10 @@ function updateScore() {
   highScore = (highScore > points ? highScore : points)
   document.getElementById('high-score').innerHTML = 'High Score: ' + highScore
   document.getElementById('score').innerHTML = points
+  let instructions = document.getElementById('instructions')
+  if (points === 0)
+    instructions.innerHTML = `${ isMobile.matches ? 'tap' : 'press the spacebar'} to begin`
+  else instructions.innerHTML = ''
 }
 
 document.getElementById('ai-button').onclick = function() {
