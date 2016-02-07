@@ -2,6 +2,7 @@
 //jshint -W097
 'use strict';
 
+let isMobile = typeof window.orientation !== 'undefined'
 window.GAMERUNNING = true
 window.AIPLAYING = false
 window.AIWORKER = null
@@ -14,20 +15,7 @@ let two = new Two(params).appendTo(elem)
 let centerRadius = two.height / 8
 let centerX = two.width / 2
 let centerY = two.height / 2
-
-// http://stackoverflow.com/a/10364620
-let isMobile = window.matchMedia("only screen and (max-width: 760px)");
-
-let thickness;
-if (isMobile.matches) {
-  thickness = two.height / 20
-  console.log('on mobile');
-} else {
-  thickness = two.width / 50
-  console.log('on computer');
-}
-
-thickness = two.height / 20
+let thickness = two.height / 20
 console.log(thickness);
 
 let background = two.makeRectangle(centerX, centerY, two.width, two.height)
@@ -108,7 +96,8 @@ function updateAIWorker() {
 }
 
 function updateGame() {
-  tickAngle += 0.05 * direction; tickAngle %= 2 * Math.PI
+  let tickSpeed = points * 0.001
+  tickAngle += (0.05 + tickSpeed) * direction; tickAngle %= 2 * Math.PI
 
   tick.translation.x = centerX + (centerRadius * Math.cos(tickAngle))
   tick.translation.y = centerY + (centerRadius * Math.sin(tickAngle))
@@ -130,8 +119,10 @@ function updateScore() {
   document.getElementById('high-score').innerHTML = 'High Score: ' + highScore
   document.getElementById('score').innerHTML = points
   let instructions = document.getElementById('instructions')
-  if (points === 0)
-    instructions.innerHTML = `${ isMobile.matches ? 'tap' : 'press the spacebar'} to begin`
+  if (points === 0){
+    // console.log(isMobile ? 'tap' : 'press the spacebar');
+    instructions.innerHTML = `${ isMobile ? 'tap' : 'press the spacebar'} to begin`
+  }
   else instructions.innerHTML = ''
 }
 
