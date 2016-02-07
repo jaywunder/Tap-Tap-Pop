@@ -20,7 +20,7 @@ html, body {
 
 #score {
   font-family: monospace;
-  font-size: 72px;
+  font-size: 5em;
   color: rgb(54, 60, 77)
 }
 
