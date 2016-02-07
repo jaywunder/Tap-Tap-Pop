@@ -14,13 +14,27 @@ let two = new Two(params).appendTo(elem)
 let centerRadius = two.height / 8
 let centerX = two.width / 2
 let centerY = two.height / 2
-let thickness = two.width / 50 // 20 // two.width > two.height ? two.width / 50 : two.height / 50
+
+// http://stackoverflow.com/a/10364620
+let isMobile = window.matchMedia("only screen and (max-width: 760px)");
+
+let thickness;
+if (isMobile.matches) {
+  thickness = two.height / 20
+  console.log('on mobile');
+} else {
+  thickness = two.width / 50
+  console.log('on computer');
+}
+
+thickness = two.height / 20
+console.log(thickness);
 
 let background = two.makeRectangle(centerX, centerY, two.width, two.height)
 let centerCircle = two.makeCircle(centerX, centerY,  centerRadius)
 let smallCircle = two.makeEllipse(
   centerX - centerRadius, centerY,
-  thickness * 0.6, thickness * 0.6
+  thickness * 0.4, thickness * 0.4
 )
 let tick = two.makeRoundedRectangle(
   centerX - centerRadius, centerY,
@@ -32,7 +46,7 @@ background.noStroke()
 
 centerCircle.noFill()
 centerCircle.stroke = 'rgb(54, 60, 77)'
-centerCircle.linewidth = 40
+centerCircle.linewidth = thickness
 
 smallCircle.fill = 'rgb(228, 142, 13)'
 smallCircle.noStroke()
