@@ -43,7 +43,7 @@ tick.rotation = Math.PI / 2
 tick.noStroke()
 tick.fill = 'rgb(81, 191, 222)'
 
-let highScore = getCookie('highScore') + 0 || 0
+let highScore = parseFloat(getCookie('highScore')) || 0
 let tickAngle = 0
 let points = 0
 let randAngle = 2 * Math.PI * Math.random()
