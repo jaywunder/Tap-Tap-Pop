@@ -21,7 +21,7 @@ console.log(thickness);
 var background = two.makeRectangle(centerX, centerY, two.width, two.height);
 var centerCircle = two.makeCircle(centerX, centerY, centerRadius);
 var smallCircle = two.makeEllipse(centerX - centerRadius, centerY, thickness * 0.4, thickness * 0.4);
-var tick = two.makeRoundedRectangle(centerX - centerRadius, centerY, thickness / 2, thickness * 1.9, 3);
+var tick = two.makeRoundedRectangle(centerX - centerRadius, centerY, thickness * 0.3, thickness * 2, 3);
 
 background.fill = 'rgb(109, 140, 149)';
 background.noStroke();
@@ -37,7 +37,7 @@ tick.rotation = Math.PI / 2;
 tick.noStroke();
 tick.fill = 'rgb(81, 191, 222)';
 
-var highScore = getCookie('highScore') + 0 || 0;
+var highScore = parseInt(getCookie('highScore2')) || 0;
 var tickAngle = 0;
 var points = 0;
 var randAngle = 2 * Math.PI * Math.random();
@@ -108,7 +108,7 @@ function updateScore() {
   highScore = highScore > points ? highScore : points;
   document.getElementById('high-score').innerHTML = 'High Score: ' + highScore;
   document.getElementById('score').innerHTML = points;
-  setCookie('highScore', highScore, 999999);
+  setCookie('highScore2', highScore, 999999);
   var instructions = document.getElementById('instructions');
   if (points === 0) {
     // console.log(isMobile ? 'tap' : 'press the spacebar');
@@ -116,7 +116,8 @@ function updateScore() {
   } else instructions.innerHTML = '';
 }
 
-document.getElementById('ai-button').onclick = function () {
+var aiButton = document.getElementById('ai-button');
+if (aiButton !== null) aiButton.onclick = function () {
   AIPLAYING = !AIPLAYING;
 
   var button = document.getElementById('ai-button');
