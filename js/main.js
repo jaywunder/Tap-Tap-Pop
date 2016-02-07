@@ -43,7 +43,7 @@ tick.rotation = Math.PI / 2
 tick.noStroke()
 tick.fill = 'rgb(81, 191, 222)'
 
-let highScore = parseFloat(getCookie('highScore')) || 0
+let highScore = parseFloat(getCookie('highScore2')) || 0
 let tickAngle = 0
 let points = 0
 let randAngle = 2 * Math.PI * Math.random()
@@ -118,7 +118,7 @@ function updateScore() {
   highScore = (highScore > points ? highScore : points)
   document.getElementById('high-score').innerHTML = 'High Score: ' + highScore
   document.getElementById('score').innerHTML = points
-  setCookie('highScore', highScore, 999999)
+  setCookie('highScore2', highScore, 999999)
   let instructions = document.getElementById('instructions')
   if (points === 0){
     // console.log(isMobile ? 'tap' : 'press the spacebar');
