@@ -16,7 +16,6 @@ let centerRadius = two.height / 8
 let centerX = two.width / 2
 let centerY = two.height / 2
 let thickness = two.height / 20
-console.log(thickness);
 
 let background = two.makeRectangle(centerX, centerY, two.width, two.height)
 let centerCircle = two.makeCircle(centerX, centerY,  centerRadius)
@@ -70,21 +69,18 @@ $(window).on('key-space', () => {
     direction *= -1
     randAngle += Math.PI * Math.random()
     randAngle %= 2 * Math.PI
-    points += 1
+    points += 1;
+    (new Audio('./asset/blop-mark-diangelo.mp3')).play()
   } else {
     points = 0
   }
-
   updateScore()
 })
 
 let prevMessageTime = 0
 
 function onAIMessage(event) {
-  // console.log('received message from AI worker')
-  // console.log(event.timeStamp - prevMessageTime > 350)
   if (event.timeStamp - prevMessageTime > 350) {
-    // console.log(event.data);
     $(window).trigger(event.data)
     prevMessageTime = event.timeStamp
   }
@@ -121,10 +117,31 @@ function updateScore() {
   setCookie('highScore2', highScore, 999999)
   let instructions = document.getElementById('instructions')
   if (points === 0){
-    // console.log(isMobile ? 'tap' : 'press the spacebar');
-    instructions.innerHTML = `${ isMobile ? 'tap' : 'press the spacebar'} to begin`
+    instructions.innerHTML = `${ isMobile ? 'tap anywhere' : 'press the spacebar'} to begin`
+    displayHighScores()
   }
-  else instructions.innerHTML = ''
+  else {
+    instructions.innerHTML = ''
+    $('#scores-list-container').addClass('invisible')
+  }
+}
+
+function displayHighScores() {
+  getHighScores()
+    .then((data) => {
+      $('#high-score-table').replaceWith(
+        `<table id="high-score-table">
+          <tbody>
+            <tr></tr>
+          </tbody>
+        </table>`
+      )
+      let result = data.result
+      for (let i in result) {
+        $('#high-score-table tr:last').after(`<tr><td>${result[i].name}</td><td>${result[i].score}</td></tr>`)
+      }
+      $('#scores-list-container').removeClass('invisible')
+    })
 }
 
 document.getElementById('ai-button').onclick = function() {
@@ -163,3 +180,6 @@ function getCookie(cname) {
     }
     return "";
 }
+
+// displayHighScores()
+// $('#high-score-table tr:last').after('<tr><td>Name</td><td>Score</td></tr>')

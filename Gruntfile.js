@@ -13,7 +13,8 @@ module.exports = function(grunt) {
   				'dist/main.js': 'js/main.js',
           'dist/ai-player.js': 'js/ai-player.js',
           'dist/keybindings.js': 'js/keybindings.js',
-          'dist/num.js': 'js/num.js'
+          'dist/num.js': 'js/num.js',
+          'dist/db.js': 'js/db.js'
   			}
   		}
   	}

@@ -1,6 +1,6 @@
 {
   "name": "tap-tap-pop",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Clone of \"Pop the Lock\" mobile game for learning AI",
   "main": "index.html",
   "scripts": {
