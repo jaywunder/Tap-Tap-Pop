@@ -4,7 +4,8 @@
   "description": "Clone of \"Pop the Lock\" mobile game for learning AI",
   "main": "index.html",
   "scripts": {
-    "test": "open index.html"
+    "test": "open index.html",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -21,9 +22,13 @@
   },
   "homepage": "https://github.com/jaywunder/tap-tap-top#readme",
   "devDependencies": {
-    "babel-preset-es2015": "^6.3.13",
-    "grunt": "^0.4.5",
-    "grunt-babel": "^6.0.0",
-    "load-grunt-tasks": "^3.4.0"
+    "babel-core": "^6.14.0",
+    "babel-loader": "^6.2.5",
+    "babel-preset-es2015": "^6.14.0",
+    "webpack": "^1.13.2"
+  },
+  "dependencies": {
+    "d3": "^4.2.2",
+    "two.js": "^0.6.0"
   }
 }
