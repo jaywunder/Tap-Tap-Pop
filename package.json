@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "d3": "^4.2.2",
+    "svg-intersections": "^0.2.5",
     "two.js": "^0.6.0"
   }
 }

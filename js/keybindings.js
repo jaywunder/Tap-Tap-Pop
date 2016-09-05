@@ -4,32 +4,28 @@
 
 window.addEventListener('touchstart', (event) => {
   event.preventDefault()
-  $(window).trigger('key-space')
+  d3.select(window).dispatch('key-space')
 })
 
 window.addEventListener('keydown', (event) => {
-  // console.log(event.which);
   switch (event.which) {
     case 37: // left
-      $(window).trigger('key-left')
+      d3.select(window).dispatch('key-left')
       break
     case 38: // up
-      $(window).trigger('key-up')
+      d3.select(window).dispatch('key-up')
       break
     case 39: // right
-      $(window).trigger('key-right')
+      d3.select(window).dispatch('key-right')
       break
     case 40: // down
-      $(window).trigger('key-down')
+      d3.select(window).dispatch('key-down')
       break
     case 27: // esc
-      $(window).trigger('key-esc')
+      d3.select(window).dispatch('key-esc')
       break
     case 32: // space key
-      $(window).trigger('key-space')
-      break
-    case 82: // r key
-      $(window).trigger('key-r')
+      d3.select(window).dispatch('key-space')
       break
   }
 })

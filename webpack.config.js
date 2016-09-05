@@ -1,5 +1,5 @@
 module.exports = {
-  entry: './js/main.js',
+  entry: './js/main.d3.js',
   output: {
     path: __dirname + '/build',
     publicPath: '/build/',
