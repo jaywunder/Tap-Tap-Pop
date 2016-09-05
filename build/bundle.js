@@ -40,9 +40,8 @@
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//jshint -W117
@@ -55,7 +54,7 @@
 
 	var d3 = _interopRequireWildcard(_d);
 
-	var _util = __webpack_require__(13);
+	var _util = __webpack_require__(2);
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -251,8 +250,7 @@
 	new Game();
 
 /***/ },
-
-/***/ 1:
+/* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://d3js.org Version 4.2.2. Copyright 2016 Mike Bostock.
@@ -16485,8 +16483,7 @@
 	})));
 
 /***/ },
-
-/***/ 13:
+/* 2 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -16517,5 +16514,4 @@
 	}
 
 /***/ }
-
-/******/ });
+/******/ ]);
