@@ -79,6 +79,32 @@ class Game {
           this.running = !this.running; break
       }
     })
+
+    window.addEventListener('resize', this.onResize.bind(this))
+  }
+
+  onResize(event) {
+    this.container
+      .attr('width', window.innerWidth)
+      .attr('height', window.innerHeight)
+
+    this.shapeContainer
+      .attr('transform', `translate(${ this.centerX }, ${ this.centerY })`)
+
+    this.centerShape
+      .attr('r', this.centerRadius)
+      .style('stroke-width', this.thickness)
+
+    this.targetCircle
+      .attr('cy', this.centerRadius)
+      .attr('r', this.thickness / 2.5)
+
+    this.tick
+      .attr('x', -this.centerRadius / 20)
+      .attr('y', this.centerRadius - this.thickness * 1.2)
+      .attr('width', this.centerRadius / 10)
+      .attr('height', this.thickness * 2.4)
+
   }
 
   onSpaceBar() {
@@ -176,6 +202,8 @@ class Game {
 
   set points(val) {
     this._points = val
+    if (val === 0)
+      this.centerShapeColor = GREEN
   }
 
   get points() {
