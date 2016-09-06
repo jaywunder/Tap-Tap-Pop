@@ -104,6 +104,11 @@
 	    this.moveTargetCircle();
 	    this.updateGame();
 
+	    window.addEventListener('touchstart', function (event) {
+	      event.preventDefault();
+	      _this.onSpaceBar();
+	    });
+
 	    window.addEventListener('keydown', function (event) {
 	      switch (event.which) {
 	        case 32:
