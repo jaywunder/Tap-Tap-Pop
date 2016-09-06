@@ -6,7 +6,8 @@ html, body {
 }
 
 #draw-shapes {
-  position: fixed;
+  position: absolute;
+  top: 0;
   z-index: -10;
 }
 
@@ -21,11 +22,11 @@ html, body {
 #score {
   font-family: monospace;
   font-size: 5em;
-  color: rgb(54, 60, 77)
+  color: #234B6E;
 }
 
 #ai-button {
-  background: rgb(54, 60, 77);
+  background: #234B6E;
   border: none;
   position: absolute;
   bottom: 1em;
@@ -36,7 +37,7 @@ html, body {
 }
 
 #high-score {
-  color: rgb(60, 65, 80);
+  color: #234B6E;
   position: absolute;
   top: 0em;
   right: 1em;
@@ -45,7 +46,7 @@ html, body {
 }
 
 @keyframes blinker {
-  50% { opacity: 0.7; }
+  50% { opacity: 0.5; }
 }
 
 .instructions-container {
@@ -59,13 +60,13 @@ html, body {
 #instructions {
   animation: blinker 1s linear infinite;
   font-family: monospace;
-  color: rgb(54, 60, 77);
+  color: #234B6E;
   text-align: center;
 
 }
 
 #ai-button:hover {
-  background: rgb(60, 65, 80);
+  background: #234B6E;
 }
 
 #ai-button[state="on"] {

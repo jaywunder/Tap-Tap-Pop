@@ -2,164 +2,248 @@
 //jshint -W097
 'use strict';
 
-let isMobile = typeof window.orientation !== 'undefined'
-window.GAMERUNNING = true
-window.AIPLAYING = false
-window.AIWORKER = null
+import * as d3 from 'd3'
+import { getCookie, setCookie } from './util.js';
 
-// Make an instance of two and place it on the page.
-let elem = document.getElementById('draw-shapes')
-let params = { width: window.innerWidth, height: window.innerHeight }
-let two = new Two(params).appendTo(elem)
+const NOCOLOR  = 'rgba(0, 0, 0, 0)'
 
-let centerRadius = two.height / 8
-let centerX = two.width / 2
-let centerY = two.height / 2
-let thickness = two.height / 20
-console.log(thickness);
+// const GREYBLUE = 'rgb(54, 60, 77)'
+// const ORANGE   = 'rgb(228, 142, 13)'
+// const AQUA     = 'rgb(81, 191, 222)'
 
-let background = two.makeRectangle(centerX, centerY, two.width, two.height)
-let centerCircle = two.makeCircle(centerX, centerY,  centerRadius)
-let smallCircle = two.makeEllipse(
-  centerX - centerRadius, centerY,
-  thickness * 0.4, thickness * 0.4
-)
-let tick = two.makeRoundedRectangle(
-  centerX - centerRadius, centerY,
-  thickness / 2, thickness * 1.9, 3
-)
+const GREY     = '#E8E8EA'
+const YELLOW   = '#F0C034'
+const GREEN    = '#54BA75'
+const RED      = '#C83D34'
+const DARKBLUE = '#234B6E'
 
-background.fill = 'rgb(109, 140, 149)'
-background.noStroke()
+class Game {
+  constructor() {
+    this.isMobile = typeof window.orientation !== 'undefined'
+    this.running = true
+    this.highScore = parseFloat(getCookie('highScore2')) || 0
+    this.tickAngle = 0
+    this.targetAngle = 360 * Math.random()
+    this._points = 0
+    this.direction = 1
+    this._misses = 0
+    this.willMiss = false
+    this.colorQueue = []
+    this.isTransitioning = false
 
-centerCircle.noFill()
-centerCircle.stroke = 'rgb(54, 60, 77)'
-centerCircle.linewidth = thickness
+    this.container = d3.select('body')
+      .append('svg')
+      .attr('id', 'draw-shapes')
+      .attr('width', window.innerWidth)
+      .attr('height', window.innerHeight)
+      .style('background-color', GREY)
 
-smallCircle.fill = 'rgb(228, 142, 13)'
-smallCircle.noStroke()
+    this.shapeContainer = this.container
+      .append('g')
+      .attr('transform', `translate(${ this.centerX }, ${ this.centerY })`)
 
-tick.rotation = Math.PI / 2
-tick.noStroke()
-tick.fill = 'rgb(81, 191, 222)'
+    this.centerShape = this.shapeContainer
+      .append('circle')
+      .attr('r', this.centerRadius)
+      .attr('fill', NOCOLOR)
+      .style('stroke', GREEN)
+      .style('stroke-width', this.thickness)
 
-let highScore = parseFloat(getCookie('highScore2')) || 0
-let tickAngle = 0
-let points = 0
-let randAngle = 2 * Math.PI * Math.random()
-let direction = 1
+    this.targetCircle = this.shapeContainer
+      .append('circle')
+      .attr('cy', this.centerRadius)
+      .attr('r', this.thickness / 2.5)
+      .attr('fill', GREY)
+      .attr('transition-timing-function', 'ease-in-out')
 
-updateScore()
+    this.tick = this.shapeContainer
+      .append('rect')
+      .attr('x', -this.centerRadius / 20)
+      .attr('y', this.centerRadius - this.thickness * 1.2)
+      .attr('width', this.centerRadius / 10)
+      .attr('height', this.thickness * 2.4)
+      .attr('fill', DARKBLUE)
+      .attr('rx', 5)
+      .attr('ry', 5)
+      .attr('transition-timing-function', 'linear')
 
-two.bind('update', function(frameCount) {
-  if (GAMERUNNING) {
-    updateGame()
-    updateAIWorker()
+    this.updateScore()
+    this.moveTargetCircle()
+    this.updateGame()
+
+    window.addEventListener('keydown', (event) => {
+      switch (event.which) {
+        case 32: // space key
+          this.onSpaceBar(); break
+        case 27: // esc
+          this.running = !this.running; break
+      }
+    })
+
+    window.addEventListener('resize', this.onResize.bind(this))
   }
-}).play()
 
-let ten = (10 * (Math.PI / 180)) // ten degrees in radians
+  onResize(event) {
+    this.container
+      .attr('width', window.innerWidth)
+      .attr('height', window.innerHeight)
 
-$(window).on('key-r', () => { document.getElementById('ai-button').onclick() })
+    this.shapeContainer
+      .attr('transform', `translate(${ this.centerX }, ${ this.centerY })`)
 
-$(window).on('key-esc', () => { GAMERUNNING = !GAMERUNNING })
+    this.centerShape
+      .attr('r', this.centerRadius)
+      .style('stroke-width', this.thickness)
 
-$(window).on('key-space', () => {
-  if (tick.rotation > smallCircle.rotation - ten &&
-      tick.rotation < smallCircle.rotation + ten) {
-    direction *= -1
-    randAngle += Math.PI * Math.random()
-    randAngle %= 2 * Math.PI
-    points += 1
-  } else {
-    points = 0
+    this.targetCircle
+      .attr('cy', this.centerRadius)
+      .attr('r', this.thickness / 2.5)
+
+    this.tick
+      .attr('x', -this.centerRadius / 20)
+      .attr('y', this.centerRadius - this.thickness * 1.2)
+      .attr('width', this.centerRadius / 10)
+      .attr('height', this.thickness * 2.4)
+
   }
 
-  updateScore()
-})
-
-let prevMessageTime = 0
-
-function onAIMessage(event) {
-  // console.log('received message from AI worker')
-  // console.log(event.timeStamp - prevMessageTime > 350)
-  if (event.timeStamp - prevMessageTime > 350) {
-    // console.log(event.data);
-    $(window).trigger(event.data)
-    prevMessageTime = event.timeStamp
-  }
-}
-
-function updateAIWorker() {
-  if (AIPLAYING)
-    AIWORKER.postMessage([tick.rotation, smallCircle.rotation])
-}
-
-function updateGame() {
-  let tickSpeed = points * 0.001
-  tickAngle += (0.05 + tickSpeed) * direction; tickAngle %= 2 * Math.PI
-
-  tick.translation.x = centerX + (centerRadius * Math.cos(tickAngle))
-  tick.translation.y = centerY + (centerRadius * Math.sin(tickAngle))
-  tick.rotation = (Math.PI / 2) + Math.atan2(
-    Math.sin(tickAngle),
-    Math.cos(tickAngle)
-  )
-
-  smallCircle.translation.x = centerX + (centerRadius * Math.cos(randAngle))
-  smallCircle.translation.y = centerY + (centerRadius * Math.sin(randAngle))
-  smallCircle.rotation = (Math.PI / 2) + Math.atan2(
-    Math.sin(randAngle),
-    Math.cos(randAngle)
-  )
-}
-
-function updateScore() {
-  highScore = (highScore > points ? highScore : points)
-  document.getElementById('high-score').innerHTML = 'High Score: ' + highScore
-  document.getElementById('score').innerHTML = points
-  setCookie('highScore2', highScore, 999999)
-  let instructions = document.getElementById('instructions')
-  if (points === 0){
-    // console.log(isMobile ? 'tap' : 'press the spacebar');
-    instructions.innerHTML = `${ isMobile ? 'tap' : 'press the spacebar'} to begin`
-  }
-  else instructions.innerHTML = ''
-}
-
-document.getElementById('ai-button').onclick = function() {
-  AIPLAYING = !AIPLAYING
-
-  let button = document.getElementById('ai-button')
-  button.innerHTML = 'AI Player: ' + (AIPLAYING ? 'on' : 'off')
-  button.setAttribute('state', (AIPLAYING ? 'on' : 'off'))
-  button.blur()
-
-  if (AIPLAYING) {
-    AIWORKER = new Worker("./js/ai-player.js");
-    AIWORKER.onmessage = onAIMessage
-
-  } else {
-    AIWORKER.terminate()
-    AIWORKER = null
-  }
-}
-
-// http://www.w3schools.com/js/js_cookies.asp
-function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays*24*60*60*1000));
-    var expires = "expires="+d.toUTCString();
-    document.cookie = cname + "=" + cvalue + "; " + expires;
-}
-
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i = 0; i<ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1);
-        if (c.indexOf(name) === 0) return c.substring(name.length,c.length);
+  onSpaceBar() {
+    if (this.tickOverLapsCircle()) {
+      this.points++
+      this.willMiss = false
+      this.misses = 0
+      this.direction *= -1
+      this.targetAngle += (90 + 180 * Math.random()) * -this.direction
+      if (this.targetAngle < 0)
+        this.targetAngle = 360 + this.targetAngle
+      this.targetAngle %= 360
+      this.moveTargetCircle()
+    } else {
+      this.misses = 0
+      this.points = 0
     }
-    return "";
+
+    this.updateScore()
+  }
+
+  moveTargetCircle() {
+    this.targetCircle
+      .transition()
+      .attr('transform', `rotate(${ this.targetAngle })`)
+      .duration(500)
+  }
+
+  tickOverLapsCircle() {
+    return (
+      Math.abs(this.tickAngle) > this.targetAngle - 10 &&
+      Math.abs(this.tickAngle) < this.targetAngle + 10
+    )
+  }
+
+  updateGame() {
+    setTimeout(this.updateGame.bind(this), 16)
+
+    if ( this.running ) {
+      let tickSpeed = (3 + this.points * 0.1) * this.direction
+      if (this.tickAngle + tickSpeed > 0){
+        this.tickAngle += tickSpeed
+      } else {
+        this.tickAngle = 360 + tickSpeed
+      }
+
+      this.tickAngle %= 360
+
+      if (this.tickOverLapsCircle()) this.willMiss = true
+
+      if (this.willMiss && !this.tickOverLapsCircle()) {
+        this.misses++
+        this.willMiss = false
+      }
+
+      if (this.colorQueue.length > 0 && !this.isTransitioning) {
+        this.isTransitioning = true
+        this.centerShape
+          .transition()
+          .style('stroke', this.colorQueue[0])
+          .duration(300)
+          .on('end', () => {
+            this.isTransitioning = false
+            this.colorQueue.splice(0, 1)
+          })
+      }
+
+      this.tick
+        .transition()
+        .attr('transform', `rotate(${ this.tickAngle })`)
+        .duration(15)
+    }
+  }
+
+  updateScore() {
+    this.highScore = (this.highScore > this.points ? this.highScore : this.points)
+    document.getElementById('high-score').innerHTML = 'High Score: ' + this.highScore
+    document.getElementById('score').innerHTML = this.points
+    setCookie('highScore2', this.highScore, 9999999999999)
+    let instructions = document.getElementById('instructions')
+    if (this.points === 0)
+      instructions.innerHTML = `${ this.isMobile ? 'tap' : 'press the spacebar'} to begin`
+    else
+      instructions.innerHTML = ''
+  }
+
+  get centerRadius() {
+    return window.innerHeight < window.innerWidth
+      ? window.innerHeight / 6
+      : window.innerWidth  / 6
+  }
+  get centerX() { return window.innerWidth / 2 }
+  get centerY() { return window.innerHeight / 2 }
+  get thickness() { return this.centerRadius / 2.5 }
+
+  set points(val) {
+    this._points = val
+    if (val === 0)
+      this.centerShapeColor = GREEN
+  }
+
+  get points() {
+    return this._points
+  }
+
+  set centerShapeColor(val) {
+    this.colorQueue.push(val)
+  }
+
+  set misses(val) {
+    if (this.points === 0) {
+      this.centerShapeColor = GREEN
+      return
+    }
+
+    this._misses = val
+
+    if (this._misses === 0)
+      this.centerShapeColor = GREEN
+
+    else if (this._misses === 1)
+      this.centerShapeColor = YELLOW
+
+    else if (this._misses === 2)
+      this.centerShapeColor = RED
+
+    else if (this._misses >= 3) {
+      if (this.points - 1 < 0)
+        this.centerShapeColor = GREEN
+      else
+        this.points--
+
+      this.updateScore()
+    }
+  }
+
+  get misses() {
+    return this._misses
+  }
 }
+
+new Game()
