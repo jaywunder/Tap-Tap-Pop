@@ -71,6 +71,8 @@ class Game {
     this.moveTargetCircle()
     this.updateGame()
 
+    window.addEventListener('touchstart', this.onSpaceBar.bind(this))
+
     window.addEventListener('keydown', (event) => {
       switch (event.which) {
         case 32: // space key
