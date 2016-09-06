@@ -71,7 +71,10 @@ class Game {
     this.moveTargetCircle()
     this.updateGame()
 
-    window.addEventListener('touchstart', this.onSpaceBar.bind(this))
+    window.addEventListener('touchstart', (event) => {
+      event.preventDefault()
+      this.onSpaceBar()
+    })
 
     window.addEventListener('keydown', (event) => {
       switch (event.which) {
